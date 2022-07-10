@@ -7,19 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use HasFactory;
-    public $timestamps = false;
+ protected $fileable =['name','user_id','price','category','location','descirption','view','image'];
+ use HasFactory;
 
-    protected $fileable =
-    ["author_id", "name", "date_one", "date_two",
-     "date_three", "dis_one", "dis_two", "dis_three",
-     "exp_date", "price", "image", "quantity", "phone_number"]; //
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
-    }
-    public function likes()
-    {
-        return $this->hasMany(Like::class);
-    }
 }
