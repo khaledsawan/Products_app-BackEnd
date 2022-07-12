@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
- protected $fileable =['name','user_id','price','category','location','descirption','view','image'];
- use HasFactory;
-
+    protected $fileable=['name','user_id','descirption','location','image','category','price','quantity','view'];
+    protected $guarded = [];
+    use HasFactory;
 }

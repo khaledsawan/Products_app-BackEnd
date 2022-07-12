@@ -2,6 +2,9 @@
 
 return [
 
+    'providers' =>[
+        Laravel\Passport\PassportServiceProvider::class,
+        ],
     /*
     |--------------------------------------------------------------------------
     | Application Name

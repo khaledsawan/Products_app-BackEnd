@@ -41,18 +41,10 @@ return [
             'provider' => 'users',
         ],
         'api' => [
-            'driver' => 'passport', // set this to passport
+            'driver' => 'passport',
             'provider' => 'users',
-            'hash' => false,
         ],
     ],
-    // 'images' => [
-    //     'driver' => 'local', // set this to passport
-    //     'root' => base_path() . 'public/images',
-    //     'url' => env(key:"App_URL") . '/public',
-    //     'visibility'=> 'public',
-    // ],
-
 
     /*
     |--------------------------------------------------------------------------
@@ -74,7 +66,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Author::class,
+            'model' => App\Models\User::class,
         ],
 
         // 'users' => [
@@ -92,7 +84,7 @@ return [
     | than one user table or model in the application and you want to have
     | separate password reset settings based on the specific user types.
     |
-    | The expire time is the number of minutes that the reset token should be
+    | The expire time is the number of minutes that each reset token will be
     | considered valid. This security feature keeps tokens short-lived so
     | they have less time to be guessed. You may change this as needed.
     |
