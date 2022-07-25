@@ -19,7 +19,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::select('id', 'name', 'price', 'category', 'image', 'view')
+        $products = Product::select('id', 'name', 'price', 'category', 'image', 'view', 'quantity')
             ->get();
         return response()->json([
             "success" => true,
@@ -30,7 +30,7 @@ class ProductController extends Controller
     public function myProduct()
     {
         $user = Auth::user();
-        $products = Product::select('id', 'name', 'price', 'category', 'image', 'view')->where('user_id', '=',  $user->id)
+        $products = Product::select('id', 'name', 'price', 'category', 'image', 'view', 'quantity')->where('user_id', '=',  $user->id)
             ->get();
         return response()->json([
             "success" => true,
@@ -98,17 +98,26 @@ class ProductController extends Controller
             return response()->json([
                 "success" => false,
                 "message" => "chake the id.",
-                "data" => []
+                "item" => []
             ]);
         }
         $product = Product::find($request->id);
         if (is_null($product)) {
-            return $this->sendError('Product not found.');
+            return response()->json([
+                "success" => false,
+                "message" => "Product Not Find.",
+                "item" => []
+            ]);
         }
+        $user = Auth::user();
+
+            $product->view = $product->view + 1;
+            $product->save();
+
         return response()->json([
             "success" => true,
             "message" => "Product retrieved successfully.",
-            "data" => $product
+            "item" => $product
         ]);
     }
     /**
@@ -123,13 +132,11 @@ class ProductController extends Controller
         $input = $request->all();
         $validator = Validator::make($input, [
             'id' => 'required|numeric',
-            'name' => 'required',
             'descirption' => 'required',
             'location' => 'required',
             'category' => 'required',
             'price' => 'required|numeric',
             'quantity' => 'required|numeric',
-            //'image' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -138,14 +145,24 @@ class ProductController extends Controller
                 "data" => []
             ]);
         }
+
         $product = Product::where('id', '=', $request->id)->first();
-        $product->name = $input['name'];
-        $product->descirption = $input['descirption'];
-        $product->location = $input['location'];
-        $product->category = $input['category'];
-        $product->price = $input['price'];
-        $product->quantity = $input['quantity'];
-        $product->save();
+        $user = Auth::user();
+        if( $product->user_id==$user->id){
+            $product->descirption = $input['descirption'];
+            $product->location = $input['location'];
+            $product->category = $input['category'];
+            $product->price = $input['price'];
+            $product->quantity = $input['quantity'];
+            $product->save();
+        }else{
+            return response()->json([
+                "success" => false,
+                "message" => "you don't have permission.",
+                "data" => []
+            ]);
+        }
+
         return response()->json([
             "success" => true,
             "message" => "Product updated successfully.",
@@ -173,7 +190,7 @@ class ProductController extends Controller
         // if (File::exists($image_path)) {
         //     File::delete($image_path);
         // }
-        unlink("public/Image/".$product->image);
+        unlink("public/Image/" . $product->image);
         $product->delete();
         DB::commit();
         return response()->json([
